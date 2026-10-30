@@ -1,4 +1,4 @@
-# NTH // SIGNAL
+# Network Threat Hunting & Anomaly Detection
 
 ### Network Threat Hunting & Anomaly Detection
 
