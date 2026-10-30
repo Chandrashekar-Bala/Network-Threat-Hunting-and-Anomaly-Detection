@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>NTH // Signal — Investigation</title>
+<style>
+:root {
+  --bg:#080c12;
+  --panel:#101720;
+  --line:#202c39;
+  --muted:#8795a5;
+  --text:#e7edf4;
+  --cyan:#4de0d0;
+  --red:#ff657a;
+  --amber:#ffbd59;
+  --blue:#79aaff;
+  --green:#54d69a
+}
+* {
+  box-sizing:border-box
+}
+body {
+  margin:0;
+  background:radial-gradient(ellipse at 78% -20%,#17343d 0,transparent 40%),var(--bg);
+  color:var(--text);
+  font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif
+}
+header {
+  height:72px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 4vw;
+  background:#090e15d9;
+  position:sticky;
+  top:0;
+  z-index:3;
+  backdrop-filter:blur(16px)
+}
+.brand {
+  font-size:15px;
+  font-weight:750;
+  letter-spacing:.09em
+}
+.brand b {
+  color:var(--cyan)
+}
+.live {
+  font:11px ui-monospace,monospace;
+  color:var(--green);
+  letter-spacing:.12em
+}
+.live:before {
+  content:"";
+  display:inline-block;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:currentColor;
+  margin:0 9px 1px 0;
+  box-shadow:0 0 12px currentColor
+}
+main {
+  max-width:1480px;
+  margin:auto;
+  padding:34px 4vw 64px
+}
+.eyebrow {
+  font:11px ui-monospace,monospace;
+  color:var(--cyan);
+  letter-spacing:.16em;
+  text-transform:uppercase
+}
+.title-row {
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:end;
+  margin:8px 0 26px
+}
+h1 {
+  font-size:clamp(26px,3.5vw,40px);
+  line-height:1.1;
+  letter-spacing:-.04em;
+  margin:0
+}
+.sub {
+  color:var(--muted);
+  margin-top:9px
+}
+.source {
+  color:#b8c4d0;
+  font:12px ui-monospace,monospace;
+  text-align:right
+}
+.source small {
+  display:block;
+  color:var(--muted);
+  margin-top:5px
+}
+.cards {
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:13px;
+  margin-bottom:18px
+}
+.card,.panel {
+  border:1px solid var(--line);
+  background:linear-gradient(145deg,#131d27,#0d141d);
+  border-radius:9px
+}
+.card {
+  padding:17px 19px;
+  min-height:104px
+}
+.card-label {
+  font:10px ui-monospace,monospace;
+  color:var(--muted);
+  letter-spacing:.11em;
+  text-transform:uppercase
+}
+.value {
+  font-size:29px;
+  font-weight:680;
+  letter-spacing:-.04em;
+  margin-top:7px
+}
+.value.alert {
+  color:var(--red)
+}
+.hint {
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px
+}
+.grid {
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin-bottom:16px
+}
+.panel {
+  padding:18px 20px
+}
+.panel-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px
+}
+.panel h2 {
+  font-size:13px;
+  letter-spacing:.03em;
+  margin:0;
+  font-weight:650
+}
+.panel-head span {
+  font:10px ui-monospace,monospace;
+  color:var(--muted)
+}
+.bars {
+  height:128px;
+  display:flex;
+  align-items:end;
+  gap:4px;
+  padding-top:12px;
+  border-bottom:1px solid var(--line)
+}
+.bar {
+  flex:1;
+  min-width:2px;
+  background:linear-gradient(0deg,#246d71,#4de0d0);
+  opacity:.8;
+  border-radius:3px 3px 0 0;
+  position:relative
+}
+.bar:hover {
+  opacity:1;
+  filter:brightness(1.2)
+}
+.bar i {
+  position:absolute;
+  top:-17px;
+  left:50%;
+  transform:translateX(-50%);
+  font:9px ui-monospace,monospace;
+  color:var(--muted);
+  font-style:normal
+}
+.axis {
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font:9px ui-monospace,monospace;
+  padding-top:7px
+}
+.signal-list {
+  display:flex;
+  flex-direction:column;
+  gap:10px
+}
+.sig-row {
+  display:grid;
+  grid-template-columns:1fr 34px;
+  gap:8px;
+  font-size:11px
+}
+.sig-label {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  color:#c9d2dc
+}
+.sig-track {
+  height:4px;
+  background:#1e2934;
+  border-radius:9px;
+  margin-top:5px
+}
+.sig-track i {
+  display:block;
+  height:100%;
+  background:var(--amber);
+  border-radius:9px
+}
+.sig-num {
+  font:11px ui-monospace,monospace;
+  color:var(--muted);
+  text-align:right
+}
+.toolbar {
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-bottom:12px
+}
+.toolbar input,.toolbar select {
+  background:#0b1118;
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:6px;
+  padding:9px 11px;
+  font:12px ui-monospace,monospace;
+  outline:none
+}
+.toolbar input {
+  flex:1;
+  min-width:200px
+}
+.toolbar input:focus,.toolbar select:focus {
+  border-color:#3a938f
+}
+.toolbar button {
+  background:#17343d;
+  border:1px solid #355653;
+  border-radius:6px;
+  color:var(--cyan);
+  cursor:pointer;
+  padding:9px 12px;
+  font:12px ui-monospace,monospace
+}
+.toolbar button:hover {
+  background:#1d4148
+}
+#caseNotes:focus {
+  border-color:#3a938f;
+  outline:none
+}
+.sig-label a {
+  color:var(--cyan);
+  text-decoration:none
+}
+.sig-label a:hover {
+  text-decoration:underline
+}
+.table-wrap {
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#0d141d
+}
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:960px;
+  text-align:left
+}
+th {
+  font:10px ui-monospace,monospace;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:#111a24;
+  padding:12px 14px;
+  position:sticky;
+  top:0
+}
+td {
+  padding:11px 14px;
+  border-top:1px solid #1b2732;
+  font-size:12px;
+  vertical-align:top
+}
+tr:hover td {
+  background:#121e28
+}
+.mono {
+  font:11px ui-monospace,monospace;
+  white-space:nowrap
+}
+.ip {
+  color:#d8e2ec
+}
+.muted {
+  color:var(--muted)
+}
+.sev {
+  font:10px ui-monospace,monospace;
+  border-radius:20px;
+  padding:3px 8px;
+  white-space:nowrap
+}
+.Critical,.High {
+  color:#ff8b98;
+  background:#48232b
+}
+.Medium {
+  color:#ffcc73;
+  background:#40341f
+}
+.Low {
+  color:#81d8b0;
+  background:#1b382e
+}
+.Informational {
+  color:#9aa9b8;
+  background:#202a34
+}
+.score {
+  font:12px ui-monospace,monospace;
+  font-weight:bold
+}
+.reasons {
+  min-width:235px;
+  max-width:310px
+}
+.reason {
+  display:block;
+  color:#c0ccd7;
+  margin:2px 0
+}
+.reason:before {
+  content:"↳ ";
+  color:var(--cyan)
+}
+.empty {
+  text-align:center;
+  padding:32px;
+  color:var(--muted)
+}
+footer {
+  padding-top:18px;
+  color:var(--muted);
+  font-size:11px;
+  display:flex;
+  justify-content:space-between;
+  gap:14px
+}
+.disclaimer {
+  max-width:800px
+}
+.tag {
+  border:1px solid #355653;
+  border-radius:4px;
+  padding:4px 7px;
+  color:var(--cyan);
+  font:10px ui-monospace,monospace
+}
+@media(max-width:850px) {
+  .cards {
+  grid-template-columns:repeat(2,1fr)
+}
+.grid {
+  grid-template-columns:1fr
+}
+.title-row {
+  align-items:start;
+  flex-direction:column
+}
+.source {
+  text-align:left
+}
+
+}
+@media(max-width:480px) {
+  main {
+  padding-left:16px;
+  padding-right:16px
+}
+@media print {
+  body {
+    background:#fff;
+    color:#111
+  }
+  header,.toolbar,#caseNotes,#casePanel,.tag {
+    display:none !important
+  }
+  main {
+    max-width:none;
+    padding:0
+  }
+  .card,.panel,.table-wrap {
+    background:#fff;
+    color:#111;
+    border-color:#bbb;
+    break-inside:avoid
+  }
+  .muted,.hint,.sub,.source,td,th {
+    color:#222
+  }
+  .table-wrap {
+    overflow:visible
+  }
+  th {
+    position:static;
+    background:#eee
+  }
+  a {
+    color:#111
+  }
+}
+.cards {
+  gap:8px
+}
+.card {
+  padding:13px
+}
+.value {
+  font-size:24px
+}
+header {
+  padding:0 16px
+}
+
+}
+
+</style>
+</head>
+<body>
+<header>
+<div class="brand">NTH <b>//</b> SIGNAL</div>
+<div class="live">LOCAL ANALYSIS</div>
+</header>
+<main>
+<div class="eyebrow">Network threat hunting / flow analysis</div>
+<div class="title-row">
+<div>
+<h1>Investigation overview</h1>
+<div class="sub">Explainable behavioral signals from your network flow capture.</div>
+</div>
+<div class="source" id="source">
+</div>
+</div>
+<section class="cards">
+<div class="card">
+<div class="card-label">Flows analyzed</div>
+<div class="value" id="flowCount">—</div>
+<div class="hint">Normalized connection records</div>
+</div>
+<div class="card">
+<div class="card-label">Hosts observed</div>
+<div class="value" id="hostCount">—</div>
+<div class="hint">Unique source and destination IPs</div>
+</div>
+<div class="card">
+<div class="card-label">Flagged flows</div>
+<div class="value alert" id="incidentCount">—</div>
+<div class="hint">At least one hunting signal</div>
+</div>
+<div class="card">
+<div class="card-label">Critical priority</div>
+<div class="value alert" id="criticalCount">—</div>
+<div class="hint" id="criticalHint"></div>
+</div>
+<div class="card">
+<div class="card-label">IOC matches</div>
+<div class="value alert" id="iocCount">—</div>
+<div class="hint">Matches from your local feed</div>
+</div>
+</section>
+<section class="grid">
+<div class="panel">
+<div class="panel-head">
+<h2>ACTIVITY TIMELINE</h2>
+<span id="timeRange">FLOW VOLUME BY CAPTURE ORDER</span>
+</div>
+<div class="bars" id="timeline">
+</div>
+<div class="axis">
+<span>earliest</span>
+<span>latest</span>
+</div>
+</div>
+<div class="panel">
+<div class="panel-head">
+<h2>TOP DETECTION SIGNALS</h2>
+<span>RANKED BY OCCURRENCE</span>
+</div>
+<div class="signal-list" id="signals">
+</div>
+</div>
+</section>
+<section class="panel" id="casePanel" style="margin-bottom:16px">
+<div class="panel-head">
+<h2>MITRE ATT&amp;CK CANDIDATES</h2>
+<span>BEHAVIORAL LEADS · NOT ATTRIBUTION</span>
+</div>
+<div id="mitre" class="signal-list">
+</div>
+</section>
+<section class="panel" style="margin-bottom:16px">
+<div class="panel-head">
+<h2>INVESTIGATION NOTES</h2>
+<span>STORED IN THIS BROWSER</span>
+</div>
+<div class="toolbar">
+<select id="caseStatus">
+<option>Open</option>
+<option>Investigating</option>
+<option>Contained</option>
+<option>Closed</option>
+</select>
+<button id="caseExport" type="button">Export case JSON</button>
+<button id="printReport" type="button">Print / Save PDF</button>
+<span id="caseSaved" class="muted" style="align-self:center">Notes stay on this device until exported.</span>
+</div>
+<textarea id="caseNotes" rows="5" placeholder="Record what you checked, what you found, and the next action." style="display:block;width:100%;resize:vertical;background:#0b1118;border:1px solid #202c39;border-radius:6px;color:#e7edf4;padding:12px;font:13px/1.5 system-ui">
+</textarea>
+</section>
+<section class="panel">
+<div class="panel-head">
+<h2>FLOW EXPLORER</h2>
+<span id="shown">—</span>
+</div>
+<div class="toolbar">
+<input id="search" placeholder="Search IP, port, protocol, or signal…" autocomplete="off">
+<select id="severity">
+<option value="all">All severities</option>
+<option>Critical</option>
+<option>High</option>
+<option>Medium</option>
+<option>Low</option>
+<option>Informational</option>
+</select>
+<select id="kind">
+<option value="all">All flows</option>
+<option value="flagged">Flagged only</option>
+</select>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Severity</th>
+<th>Confidence</th>
+<th>Priority</th>
+<th>Timestamp (UTC)</th>
+<th>Source</th>
+<th>Destination</th>
+<th>Proto</th>
+<th>Traffic / DNS</th>
+<th>Why it surfaced</th>
+</tr>
+</thead>
+<tbody id="body">
+</tbody>
+</table>
+<div id="empty" class="empty" style="display:none">No flows match these filters.</div>
+</div>
+</section>
+<footer>
+<div class="disclaimer">Signals are triage leads, not proof of compromise. Thresholds are heuristic and depend on capture scope, direction, sensor placement, and local network baselines. Validate findings against endpoint, identity, DNS, and firewall telemetry.</div>
+<div class="tag">OFFLINE REPORT · NO DATA UPLOAD</div>
+</footer>
+</main>
+<script id="report-data" type="application/json">__NTH_REPORT_DATA__</script>
+<script>
+const reportData = JSON.parse(document.getElementById("report-data").textContent);
+const meta = reportData.meta;
+const flows = reportData.flows;
+const byId = (id) => document.getElementById(id);
+const escapeHtml = (value) => String(value ?? "—").replace(/[&<>"']/g, (character) => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  "\"": "&quot;",
+  "'": "&#39;",
+}[character]));
+
+byId("source").innerHTML = `${escapeHtml(meta.source)}<small>${escapeHtml(meta.format)} · ${new Date(meta.created).toLocaleString()}</small>`;
+byId("flowCount").textContent = meta.flow_count.toLocaleString();
+byId("hostCount").textContent = meta.host_count.toLocaleString();
+byId("incidentCount").textContent = meta.incident_count.toLocaleString();
+byId("criticalCount").textContent = meta.critical_count.toLocaleString();
+byId("criticalHint").textContent = `Score threshold: ${meta.critical_threshold}`;
+byId("iocCount").textContent = (meta.ioc_match_count || 0).toLocaleString();
+
+if (meta.time_start && meta.time_end) {
+  byId("timeRange").textContent = `${new Date(meta.time_start).toLocaleString()} — ${new Date(meta.time_end).toLocaleString()}`;
+}
+
+function drawTimeline() {
+  const bins = Array.from({ length: 48 }, () => 0);
+  const start = meta.time_start ? new Date(meta.time_start).getTime() : 0;
+  const end = meta.time_end ? new Date(meta.time_end).getTime() : start;
+
+  flows.forEach((flow) => {
+    if (!flow.timestamp) return;
+    const time = new Date(flow.timestamp).getTime();
+    const index = end === start ? 0 : Math.min(47, Math.floor(((time - start) / (end - start)) * 48));
+    bins[index] += 1;
+  });
+
+  const maximum = Math.max(1, ...bins);
+  byId("timeline").innerHTML = bins.map((count, index) => {
+    const height = Math.max(2, (count / maximum) * 100);
+    return `<div class="bar" style="height:${height}%" title="Bucket ${index + 1}: ${count} flows"></div>`;
+  }).join("");
+}
+
+function drawSignalSummary() {
+  const signals = meta.signal_counts || [];
+  const maximum = Math.max(1, ...signals.slice(0, 5).map((item) => item[1]));
+  byId("signals").innerHTML = signals.length
+    ? signals.slice(0, 5).map(([name, count]) => {
+      const width = Math.max(4, (count / maximum) * 100);
+      return `<div class="sig-row"><div><div class="sig-label">${escapeHtml(name)}</div><div class="sig-track"><i style="width:${width}%"></i></div></div><div class="sig-num">${count}</div></div>`;
+    }).join("")
+    : "<div class=muted>No detection signals in this capture.</div>";
+}
+
+function drawTechniqueSummary() {
+  const techniques = new Map();
+  flows.forEach((flow) => {
+    (flow.mitre || []).forEach((technique) => {
+      const current = techniques.get(technique.id) || { ...technique, count: 0 };
+      current.count += 1;
+      techniques.set(technique.id, current);
+    });
+  });
+
+  byId("mitre").innerHTML = techniques.size
+    ? Array.from(techniques.values()).map((technique) => `
+      <div class="sig-row">
+        <div>
+          <div class="sig-label">
+            <a href="${escapeHtml(technique.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(technique.id)} · ${escapeHtml(technique.name)}</a>
+            <span>${escapeHtml(technique.tactic)} · ${escapeHtml(technique.confidence)}</span>
+          </div>
+          <div class="hint">${escapeHtml(technique.evidence)}</div>
+        </div>
+        <div class="sig-num">${technique.count}</div>
+      </div>`).join("")
+    : "<div class=muted>No technique candidates in this capture.</div>";
+}
+
+function setupCaseNotes() {
+  const storageKey = `nth-signal-case:${meta.source}`;
+  const validStatuses = ["Open", "Investigating", "Contained", "Closed"];
+  let saved = { status: "Open", notes: "" };
+
+  try {
+    saved = { ...saved, ...JSON.parse(localStorage.getItem(storageKey) || "{}") };
+  } catch {
+    byId("caseSaved").textContent = "Browser storage is unavailable; export the case to keep notes.";
+  }
+
+  if (!validStatuses.includes(saved.status)) saved.status = "Open";
+  byId("caseStatus").value = saved.status;
+  byId("caseNotes").value = saved.notes;
+
+  const save = () => {
+    saved = { status: byId("caseStatus").value, notes: byId("caseNotes").value };
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(saved));
+      byId("caseSaved").textContent = "Saved in this browser.";
+    } catch {
+      byId("caseSaved").textContent = "Browser storage is unavailable; export the case to keep notes.";
+    }
+  };
+
+  byId("caseStatus").addEventListener("change", save);
+  byId("caseNotes").addEventListener("input", save);
+  byId("printReport").addEventListener("click", () => window.print());
+  byId("caseExport").addEventListener("click", () => {
+    const caseFile = {
+      app: meta.app,
+      source: meta.source,
+      exported: new Date().toISOString(),
+      status: byId("caseStatus").value,
+      analyst_notes: byId("caseNotes").value,
+      summary: {
+        flows: meta.flow_count,
+        flagged_flows: meta.incident_count,
+        critical_flows: meta.critical_count,
+        ioc_matches: meta.ioc_match_count,
+      },
+      findings: flows.filter((flow) => flow.signals.length > 0),
+    };
+    const file = new Blob([JSON.stringify(caseFile, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(file);
+    link.download = `NTH-case-${meta.source.replace(/[^a-z0-9_-]/gi, "_")}.json`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  });
+}
+
+function renderFlows() {
+  const search = byId("search").value.trim().toLowerCase();
+  const severity = byId("severity").value;
+  const flaggedOnly = byId("kind").value === "flagged";
+  const matches = flows.filter((flow) => {
+    const text = [
+      flow.src_ip, flow.dst_ip, flow.src_port, flow.dst_port, flow.protocol,
+      flow.conn_state, flow.dns_query, ...(flow.dns_queries || []),
+      ...flow.signals.map((signal) => `${signal.title} ${signal.detail}`),
+      ...(flow.ioc_matches || []).map((match) => match.indicator),
+    ].join(" ").toLowerCase();
+    return (severity === "all" || flow.severity === severity)
+      && (!flaggedOnly || flow.signals.length > 0)
+      && (!search || text.includes(search));
+  });
+
+  matches.sort((left, right) => right.priority_score - left.priority_score
+    || (right.timestamp || "").localeCompare(left.timestamp || ""));
+  const visible = matches.slice(0, 500);
+  byId("shown").textContent = visible.length < matches.length
+    ? `Showing ${visible.length} of ${matches.length} matching flows`
+    : `${matches.length.toLocaleString()} matching flows`;
+  byId("empty").style.display = matches.length ? "none" : "block";
+  byId("body").innerHTML = visible.map((flow) => {
+    const timestamp = flow.timestamp
+      ? new Date(flow.timestamp).toISOString().replace("T", " ").replace("Z", "")
+      : "—";
+    const signals = flow.signals.length
+      ? flow.signals.map((signal) => `<span class="reason" title="${escapeHtml(signal.detail)}">${escapeHtml(signal.title)} <span class="muted">${escapeHtml(signal.rule_id || "")}${signal.rule_id ? " · " : ""}${escapeHtml(signal.confidence || "")}: ${escapeHtml(signal.detail)}</span></span>`).join("")
+      : "<span class=muted>No detection signals</span>";
+    const iocEvidence = (flow.ioc_matches || []).map((match) =>
+      `<span class="reason">Feed: ${escapeHtml(match.source)} · ${escapeHtml(match.confidence)} · ${escapeHtml(match.notes)}</span>`
+    ).join("");
+    return `<tr>
+      <td><span class="sev ${escapeHtml(flow.severity)}">${escapeHtml(flow.severity)}</span></td>
+      <td>${escapeHtml(flow.confidence || "Low")}</td>
+      <td class="score">${escapeHtml(flow.priority || "Informational")} · ${flow.priority_score || 0}</td>
+      <td class="mono">${timestamp}</td>
+      <td class="mono ip">${escapeHtml(flow.src_ip)}<br><span class="muted">:${flow.src_port}</span></td>
+      <td class="mono ip">${escapeHtml(flow.dst_ip)}<br><span class="muted">:${flow.dst_port}</span></td>
+      <td class="mono">${escapeHtml(flow.protocol)}</td>
+      <td class="mono">↑ ${Number(flow.src_bytes).toLocaleString()} B<br><span class="muted">↓ ${Number(flow.dst_bytes).toLocaleString()} B</span><br><span class="muted">${escapeHtml((flow.dns_queries || []).join(", ") || flow.dns_query || "")}</span></td>
+      <td class="reasons">${signals}${iocEvidence}</td>
+    </tr>`;
+  }).join("");
+}
+
+["search", "severity", "kind"].forEach((id) => {
+  byId(id).addEventListener(id === "search" ? "input" : "change", renderFlows);
+});
+
+drawTimeline();
+drawSignalSummary();
+drawTechniqueSummary();
+setupCaseNotes();
+renderFlows();
+</script>
+</body>
+</html>
