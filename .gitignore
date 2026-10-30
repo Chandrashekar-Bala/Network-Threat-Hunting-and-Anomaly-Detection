@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Local captures and telemetry (may contain sensitive data)
+*.pcap
+*.pcapng
+*.cap
+*.log
+
+# Local IOC lists (keep the sanitized example file)
+iocs.local.csv
+
+# Generated analysis outputs (demo artifacts are intentionally tracked)
+nth_report.html
+analysis_report.html
+findings.json
+
+# Operating system files
+.DS_Store
+Thumbs.db

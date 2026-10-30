@@ -1,0 +1,3 @@
+indicator,type,source,confidence,notes,last_seen,expires_at
+198.51.100.27,ipv4,synthetic demo feed,low,Reserved TEST-NET address used by the demo data only,,
+example.test,domain,synthetic demo feed,low,Reserved example domain for IOC matching examples,,
