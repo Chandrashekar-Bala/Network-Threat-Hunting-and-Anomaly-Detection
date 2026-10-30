@@ -2,7 +2,7 @@
 
 ### Network Threat Hunting & Anomaly Detection
 
-**NTH // SIGNAL** is a local-first network threat-hunting utility that analyzes network-flow records and packet captures, applies explainable behavioral detection rules, correlates optional local threat-intelligence indicators, and generates an interactive HTML investigation report with a machine-readable JSON output.
+**Network-Threat-Hunting-and-Anomaly-Detection** is a local-first network threat-hunting utility that analyzes network-flow records and packet captures, applies explainable behavioral detection rules, correlates optional local threat-intelligence indicators, and generates an interactive HTML investigation report with a machine-readable JSON output.
 
 It is designed to help security analysts move from raw network telemetry to structured, evidence-backed investigation leads.
 
@@ -17,7 +17,7 @@ It is designed to help security analysts move from raw network telemetry to stru
 
 Network telemetry can contain useful signs of suspicious activity, but individual indicators rarely tell the whole story. Unusual traffic volume, repeated connection attempts, periodic communication, suspicious DNS patterns, and threat-intelligence matches all require context.
 
-NTH // SIGNAL brings these observations into one analysis workflow:
+Network-Threat-Hunting-and-Anomaly-Detection brings these observations into one analysis workflow:
 
 1. Ingest network-flow exports, Zeek logs, or supported PCAP/PCAPNG captures.
 2. Normalize available network metadata into a consistent flow representation.
@@ -47,7 +47,7 @@ The tool is intended for offline analysis of supplied telemetry. It is not curre
 
 ### Detection coverage
 
-NTH // SIGNAL currently includes rules for:
+Network-Threat-Hunting-and-Anomaly-Detection currently includes rules for:
 
 - High-risk destination ports.
 - Sensitive service exposure.
@@ -106,7 +106,7 @@ These rules identify **investigation leads**, not proof of compromise. A port, t
 
 ### Severity, confidence, and priority
 
-NTH // SIGNAL deliberately treats these as separate dimensions:
+Network-Threat-Hunting-and-Anomaly-Detection deliberately treats these as separate dimensions:
 
 | Field | Meaning |
 |---|---|
@@ -332,7 +332,7 @@ For large captures, consider exporting flow or connection telemetry with an esta
 
 ## Local threat-intelligence matching
 
-NTH // SIGNAL can match network observations against a local CSV indicator list. This keeps indicator matching self-contained and avoids sending private telemetry to an external service.
+Network-Threat-Hunting-and-Anomaly-Detection can match network observations against a local CSV indicator list. This keeps indicator matching self-contained and avoids sending private telemetry to an external service.
 
 Start with the included template:
 
@@ -526,13 +526,13 @@ Test count is a development snapshot, not a detection-accuracy or production-rea
 - Use synthetic or sanitized telemetry in public demonstrations.
 - No external IOC reputation lookups are performed by the current implementation.
 
-NTH // SIGNAL is an analysis aid. It does not block traffic, isolate endpoints, modify firewall rules, or perform automated remediation.
+Network-Threat-Hunting-and-Anomaly-Detection is an analysis aid. It does not block traffic, isolate endpoints, modify firewall rules, or perform automated remediation.
 
 ---
 
 ## Current limitations and development direction
 
-NTH // SIGNAL is under active development. The following are not represented as completed capabilities:
+Network-Threat-Hunting-and-Anomaly-Detection is under active development. The following are not represented as completed capabilities:
 
 - Full IP fragment reassembly.
 - Full TCP stream or application-session reconstruction.
@@ -580,4 +580,4 @@ No license is currently specified in this repository. Unless and until a license
 
 ---
 
-**NTH // SIGNAL — From network telemetry to evidence-backed investigation leads.**
+**Network-Threat-Hunting-and-Anomaly-Detection — From network telemetry to evidence-backed investigation leads.**
